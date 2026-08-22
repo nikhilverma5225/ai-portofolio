@@ -1,0 +1,6 @@
+{
+  "name": "AI-Assisted Portfolio Generator",
+  "description": "Transforms candidate resumes (PDF, DOCX, TXT) into verified, responsive portfolios using Gemini AI with factual provenance tracking and multi-format exports.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
