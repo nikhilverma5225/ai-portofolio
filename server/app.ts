@@ -13,6 +13,14 @@ export const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
+// Middleware to normalize URLs across local and Vercel serverless environments
+app.use((req, res, next) => {
+  if (req.originalUrl && req.originalUrl.startsWith("/api") && !req.url.startsWith("/api")) {
+    req.url = req.originalUrl;
+  }
+  next();
+});
+
 // Initialize GoogleGenAI client lazily from process.env
 function getGeminiClient(): GoogleGenAI {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -125,6 +133,15 @@ function getValidStatusCode(err: any): number {
 
 // Router containing all API endpoints
 const router = Router();
+
+// Root API status endpoint
+router.get("/", (req: Request, res: Response) => {
+  res.json({
+    status: "online",
+    service: "AI-Assisted Portfolio Generator API",
+    geminiConfigured: Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 5)
+  });
+});
 
 // Health check endpoint
 router.get("/health", async (req: Request, res: Response) => {
@@ -552,5 +569,24 @@ Provide only the refined text.`,
 // Mount router on both /api and / so it seamlessly works on Vercel and locally
 app.use("/api", router);
 app.use("/", router);
+
+// Fallback 404 handler for API routes to prevent serverless execution hangs
+app.use((req: Request, res: Response) => {
+  res.status(404).json({
+    error: "API endpoint not found",
+    path: req.originalUrl || req.url,
+    method: req.method,
+  });
+});
+
+// Global error handler so serverless never crashes with FUNCTION_INVOCATION_FAILED
+app.use((err: any, req: Request, res: Response, next: any) => {
+  console.error("[API Error Handler]", err);
+  const status = getValidStatusCode(err);
+  res.status(status).json({
+    error: err?.message || "Internal Server Error",
+    success: false,
+  });
+});
 
 export default app;
