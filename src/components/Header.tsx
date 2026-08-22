@@ -130,7 +130,7 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="w-2 h-2 rounded-full bg-amber-400" />
             )}
             <span className="hidden sm:inline">
-              {checkingHealth ? "Checking..." : apiHealth?.ok ? `Gemini 3.7 (${apiHealth.latencyMs}ms)` : "API Warning"}
+              {checkingHealth ? "Checking..." : apiHealth?.ok ? `${apiHealth.model || "Gemini Live"} (${apiHealth.latencyMs}ms)` : "API Warning"}
             </span>
           </button>
 

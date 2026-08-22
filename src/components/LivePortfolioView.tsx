@@ -41,10 +41,38 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
   onUploadPhoto,
 }) => {
   const theme = getThemeClasses(config.theme, config.accent);
-  const headline = config.customHeadline || resumeData.personal_info.headline || "Professional Portfolio";
-  const summary = config.customSummary || resumeData.summary || "";
-  const name = resumeData.personal_info.name || "Candidate Name";
-  const photo = config.showPhoto && resumeData.profile_image_base64 ? resumeData.profile_image_base64 : null;
+  const personalInfo = resumeData?.personal_info || { name: "", headline: "", email: "", phone: "", location: "" };
+  const headline = config.customHeadline || personalInfo.headline || "Professional Portfolio";
+  const summary = config.customSummary || resumeData?.summary || "";
+  const name = personalInfo.name || "Candidate Portfolio";
+  const photo = config.showPhoto && resumeData?.profile_image_base64 ? resumeData.profile_image_base64 : null;
+  const links = resumeData?.links || { github: "", linkedin: "", portfolio: "", twitter: "", other: [] };
+
+  // Normalize skills data defensively
+  const rawSkills = Array.isArray(resumeData?.skills) ? resumeData.skills : [];
+  const skillsList: { category: string; items: string[] }[] = rawSkills.map((cat: any, idx: number) => {
+    if (typeof cat === "string") {
+      return { category: "Key Competencies", items: [cat] };
+    }
+    if (cat && typeof cat === "object") {
+      const items = Array.isArray(cat.items)
+        ? cat.items.filter((it: any) => typeof it === "string" && it.trim().length > 0)
+        : typeof cat.items === "string"
+        ? [cat.items]
+        : [];
+      return {
+        category: cat.category || `Category ${idx + 1}`,
+        items,
+      };
+    }
+    return { category: "Skills", items: [] };
+  }).filter((c) => c.items.length > 0);
+
+  const experienceList = Array.isArray(resumeData?.experience) ? resumeData.experience : [];
+  const projectsList = Array.isArray(resumeData?.projects) ? resumeData.projects : [];
+  const educationList = Array.isArray(resumeData?.education) ? resumeData.education : [];
+  const certificationsList = Array.isArray(resumeData?.certifications) ? resumeData.certifications : [];
+  const achievementsList = Array.isArray(resumeData?.achievements) ? resumeData.achievements : [];
 
   const fontClass = 
     config.font === "space-grotesk" ? "font-mono" :
@@ -87,7 +115,6 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
     const lower = s.toLowerCase();
     if (acronyms[lower]) return acronyms[lower];
 
-    // Standard word capitalization (e.g. "azure cloud" -> "Azure Cloud", "design thinking" -> "Design Thinking")
     return s
       .split(" ")
       .map((w) => (w.length <= 3 && !["and", "in", "of", "to", "for", "the"].includes(w.toLowerCase()) ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1)))
@@ -150,7 +177,7 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
       <nav 
         className="sticky top-0 z-40 backdrop-blur-xl border-b transition-colors px-6 py-4"
         style={{
-          backgroundColor: `${theme.bg}CC`,
+          backgroundColor: `${theme.bg}E6`,
           borderColor: theme.border,
         }}
       >
@@ -160,20 +187,20 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
           </span>
 
           <div className="hidden sm:flex items-center gap-6 text-xs font-medium" style={{ color: theme.textMuted }}>
-            {config.sectionVisibility.skills && resumeData.skills?.length > 0 && (
-              <a href="#skills" className="hover:text-white transition">Skills</a>
+            {config.sectionVisibility.skills && skillsList.length > 0 && (
+              <a href="#skills" className="hover:opacity-100 opacity-80 transition" style={{ color: theme.text }}>Skills</a>
             )}
-            {config.sectionVisibility.experience && resumeData.experience?.length > 0 && (
-              <a href="#experience" className="hover:text-white transition">Experience</a>
+            {config.sectionVisibility.experience && experienceList.length > 0 && (
+              <a href="#experience" className="hover:opacity-100 opacity-80 transition" style={{ color: theme.text }}>Experience</a>
             )}
-            {config.sectionVisibility.projects && resumeData.projects?.length > 0 && (
-              <a href="#projects" className="hover:text-white transition">Projects</a>
+            {config.sectionVisibility.projects && projectsList.length > 0 && (
+              <a href="#projects" className="hover:opacity-100 opacity-80 transition" style={{ color: theme.text }}>Projects</a>
             )}
-            {config.sectionVisibility.education && resumeData.education?.length > 0 && (
-              <a href="#education" className="hover:text-white transition">Education</a>
+            {config.sectionVisibility.education && educationList.length > 0 && (
+              <a href="#education" className="hover:opacity-100 opacity-80 transition" style={{ color: theme.text }}>Education</a>
             )}
             {config.sectionVisibility.contact && (
-              <a href="#contact" className="hover:text-white transition">Contact</a>
+              <a href="#contact" className="hover:opacity-100 opacity-80 transition" style={{ color: theme.text }}>Contact</a>
             )}
           </div>
         </div>
@@ -207,7 +234,7 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                 )}
               </div>
 
-              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight mb-3 leading-tight">
+              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight mb-3 leading-tight" style={{ color: theme.text }}>
                 Hello, I'm {name}
               </h1>
 
@@ -227,40 +254,40 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
 
               {/* Dynamic Contact Chips */}
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
-                {resumeData.personal_info.location && (
+                {personalInfo.location && (
                   <div 
                     className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border"
                     style={{ backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }}
                   >
                     <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{resumeData.personal_info.location}</span>
+                    <span>{personalInfo.location}</span>
                   </div>
                 )}
 
-                {resumeData.personal_info.email && (
+                {personalInfo.email && (
                   <a 
-                    href={`mailto:${resumeData.personal_info.email}`}
+                    href={`mailto:${personalInfo.email}`}
                     className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border hover:opacity-80 transition"
                     style={{ backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }}
                   >
                     <Mail className="w-3.5 h-3.5 text-blue-400" />
-                    <span>{resumeData.personal_info.email}</span>
+                    <span>{personalInfo.email}</span>
                   </a>
                 )}
 
-                {resumeData.personal_info.phone && (
+                {personalInfo.phone && (
                   <div 
                     className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border"
                     style={{ backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }}
                   >
                     <Phone className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>{resumeData.personal_info.phone}</span>
+                    <span>{personalInfo.phone}</span>
                   </div>
                 )}
 
-                {resumeData.links?.github && (
+                {links.github && (
                   <a 
-                    href={resumeData.links.github.startsWith("http") ? resumeData.links.github : `https://${resumeData.links.github}`}
+                    href={links.github.startsWith("http") ? links.github : `https://${links.github}`}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border hover:opacity-80 transition"
@@ -271,9 +298,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                   </a>
                 )}
 
-                {resumeData.links?.linkedin && (
+                {links.linkedin && (
                   <a 
-                    href={resumeData.links.linkedin.startsWith("http") ? resumeData.links.linkedin : `https://${resumeData.links.linkedin}`}
+                    href={links.linkedin.startsWith("http") ? links.linkedin : `https://${links.linkedin}`}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border hover:opacity-80 transition"
@@ -284,9 +311,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                   </a>
                 )}
 
-                {resumeData.links?.portfolio && (
+                {links.portfolio && (
                   <a 
-                    href={resumeData.links.portfolio.startsWith("http") ? resumeData.links.portfolio : `https://${resumeData.links.portfolio}`}
+                    href={links.portfolio.startsWith("http") ? links.portfolio : `https://${links.portfolio}`}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border hover:opacity-80 transition"
@@ -349,7 +376,7 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
       <main className="max-w-5xl mx-auto px-6 py-12 space-y-16">
         
         {/* Skills Section */}
-        {config.sectionVisibility.skills && resumeData.skills && resumeData.skills.length > 0 && (
+        {config.sectionVisibility.skills && skillsList.length > 0 && (
           <section id="skills" className="space-y-6">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -364,19 +391,24 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                   <Cpu className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Core Competencies & Skills</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: theme.text }}>
+                    Core Competencies & Skills
+                  </h2>
                   <p className="text-xs" style={{ color: theme.textMuted }}>
                     Technical proficiencies, frameworks, methodologies, and tooling
                   </p>
                 </div>
               </div>
-              <div className="hidden sm:flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-full border" style={{ backgroundColor: `${theme.surface}80`, borderColor: theme.border, color: theme.textMuted }}>
-                <span>{resumeData.skills.reduce((acc, cat) => acc + (cat.items?.length || 0), 0)} Technologies</span>
+              <div 
+                className="hidden sm:flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-full border" 
+                style={{ backgroundColor: `${theme.surface}80`, borderColor: theme.border, color: theme.textMuted }}
+              >
+                <span>{skillsList.reduce((acc, cat) => acc + (cat.items?.length || 0), 0)} Technologies</span>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {resumeData.skills.map((cat, idx) => (
+              {skillsList.map((cat, idx) => (
                 <div 
                   key={idx}
                   className="p-6 rounded-2xl border transition-all duration-200 hover:translate-y-[-2px] hover:shadow-lg relative overflow-hidden group"
@@ -449,15 +481,17 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
         )}
 
         {/* Work Experience */}
-        {config.sectionVisibility.experience && resumeData.experience && resumeData.experience.length > 0 && (
+        {config.sectionVisibility.experience && experienceList.length > 0 && (
           <section id="experience" className="space-y-6">
             <div className="flex items-center gap-3">
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Work Experience</h2>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: theme.text }}>
+                Work Experience
+              </h2>
               <div className="flex-1 h-px" style={{ backgroundColor: theme.border }} />
             </div>
 
             <div className="relative pl-6 sm:pl-8 border-l-2 space-y-8" style={{ borderColor: theme.border }}>
-              {resumeData.experience.map((exp, idx) => (
+              {experienceList.map((exp, idx) => (
                 <div key={exp.id || idx} className="relative group">
                   {/* Timeline dot */}
                   <div 
@@ -504,15 +538,17 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
         )}
 
         {/* Featured Projects */}
-        {config.sectionVisibility.projects && resumeData.projects && resumeData.projects.length > 0 && (
+        {config.sectionVisibility.projects && projectsList.length > 0 && (
           <section id="projects" className="space-y-6">
             <div className="flex items-center gap-3">
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Featured Projects</h2>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: theme.text }}>
+                Featured Projects
+              </h2>
               <div className="flex-1 h-px" style={{ backgroundColor: theme.border }} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {resumeData.projects.map((proj, idx) => (
+              {projectsList.map((proj, idx) => (
                 <div 
                   key={proj.id || idx}
                   className="p-5 rounded-xl border flex flex-col justify-between transition hover:translate-y-[-2px]"
@@ -574,15 +610,17 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
         )}
 
         {/* Education Timeline */}
-        {config.sectionVisibility.education && resumeData.education && resumeData.education.length > 0 && (
+        {config.sectionVisibility.education && educationList.length > 0 && (
           <section id="education" className="space-y-6">
             <div className="flex items-center gap-3">
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Education & Academic Background</h2>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: theme.text }}>
+                Education & Academic Background
+              </h2>
               <div className="flex-1 h-px" style={{ backgroundColor: theme.border }} />
             </div>
 
             <div className="space-y-4">
-              {resumeData.education.map((edu, idx) => (
+              {educationList.map((edu, idx) => (
                 <div 
                   key={edu.id || idx}
                   className="p-5 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3"
@@ -598,7 +636,7 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                   </div>
 
                   <div className="text-xs font-mono font-semibold" style={{ color: theme.accentColor }}>
-                    {edu.start_date} – {edu.end_date}
+                    {edu.start_date || ""} {edu.end_date ? `– ${edu.end_date}` : ""}
                   </div>
                 </div>
               ))}
@@ -607,16 +645,18 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
         )}
 
         {/* Certifications & Honors */}
-        {((config.sectionVisibility.certifications && resumeData.certifications?.length > 0) ||
-          (config.sectionVisibility.achievements && resumeData.achievements?.length > 0)) && (
+        {((config.sectionVisibility.certifications && certificationsList.length > 0) ||
+          (config.sectionVisibility.achievements && achievementsList.length > 0)) && (
           <section className="space-y-6">
             <div className="flex items-center gap-3">
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Credentials & Honors</h2>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: theme.text }}>
+                Credentials & Honors
+              </h2>
               <div className="flex-1 h-px" style={{ backgroundColor: theme.border }} />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {resumeData.certifications?.map((cert, idx) => (
+              {certificationsList.map((cert, idx) => (
                 <div 
                   key={cert.id || idx}
                   className="p-4 rounded-xl border"
@@ -630,7 +670,7 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                 </div>
               ))}
 
-              {resumeData.achievements?.map((ach, idx) => (
+              {achievementsList.map((ach, idx) => (
                 <div 
                   key={idx}
                   className="p-4 rounded-xl border"
@@ -656,9 +696,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
               Open to high-impact opportunities, advisory roles, and engineering collaborations.
             </p>
 
-            {resumeData.personal_info.email ? (
+            {personalInfo.email ? (
               <a
-                href={`mailto:${resumeData.personal_info.email}`}
+                href={`mailto:${personalInfo.email}`}
                 className="inline-flex items-center gap-2 font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-lg transition hover:scale-105 active:scale-95"
                 style={{
                   backgroundColor: theme.accentColor,

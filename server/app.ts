@@ -21,33 +21,33 @@ app.use((req, res, next) => {
   next();
 });
 
-// Initialize GoogleGenAI client lazily from process.env
+// Free-tier and verified active models for your API key
+const CANDIDATE_MODELS = [
+  "gemini-3.6-flash",
+  "gemini-3.1-flash-lite",
+  "gemini-3.7-flash",
+  "gemini-flash-latest"
+];
+
 function getGeminiClient(): GoogleGenAI {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey.trim() === "" || apiKey === "MY_GEMINI_API_KEY") {
+  const rawKey = process.env.GEMINI_API_KEY;
+  if (!rawKey || rawKey.trim() === "" || rawKey === "MY_GEMINI_API_KEY") {
     throw new Error(
       "❌ GEMINI_API_KEY is missing or unconfigured. Please define GEMINI_API_KEY in your .env file or Vercel environment variables to enable live Gemini API calls."
     );
   }
+  const cleanKey = rawKey.trim().replace(/^["']|["']$/g, "");
   return new GoogleGenAI({
-    apiKey: apiKey.trim(),
+    apiKey: cleanKey,
   });
 }
 
 function maskApiKey(key?: string): string {
   if (!key || key.length < 8) return "Not Configured";
   if (key === "MY_GEMINI_API_KEY") return "Default Key";
-  return `${key.substring(0, 6)}...${key.substring(key.length - 4)}`;
+  const clean = key.trim().replace(/^["']|["']$/g, "");
+  return `${clean.substring(0, 6)}...${clean.substring(clean.length - 4)}`;
 }
-
-// Free-tier and verified active models for your API key
-const CANDIDATE_MODELS = [
-  "gemini-3.6-flash",
-  "gemini-3.1-flash-lite",
-  "gemini-3.7-flash",
-  "gemini-2.5-flash",
-  "gemini-flash-latest"
-];
 
 async function callGeminiWithFallback(params: {
   contents: any;
@@ -56,12 +56,7 @@ async function callGeminiWithFallback(params: {
 }): Promise<{ text: string; usedModel: string }> {
   const ai = getGeminiClient();
   let lastError: any = null;
-  const timeoutMs = params.timeoutMs || 8500;
-
-  const mergedConfig = {
-    ...params.config,
-    thinkingConfig: params.config?.thinkingConfig || { thinkingBudget: 0 },
-  };
+  const timeoutMs = params.timeoutMs || 35000;
 
   let normalizedContents = params.contents;
   if (normalizedContents && typeof normalizedContents === "object" && !Array.isArray(normalizedContents) && Array.isArray(normalizedContents.parts)) {
@@ -76,7 +71,7 @@ async function callGeminiWithFallback(params: {
       const generatePromise = ai.models.generateContent({
         model,
         contents: normalizedContents,
-        config: mergedConfig,
+        config: params.config,
       });
 
       const timeoutPromise = new Promise((_, reject) =>
@@ -561,18 +556,8 @@ Provide only the refined text.`,
   }
 });
 
-// Mount router on both /api and / so it seamlessly works on Vercel and locally
+// Mount router ONLY on /api so root path '/' serves the Vite frontend app
 app.use("/api", router);
-app.use("/", router);
-
-// Fallback 404 handler for API routes to prevent serverless execution hangs
-app.use((req: Request, res: Response) => {
-  res.status(404).json({
-    error: "API endpoint not found",
-    path: req.originalUrl || req.url,
-    method: req.method,
-  });
-});
 
 // Global error handler so serverless never crashes with FUNCTION_INVOCATION_FAILED
 app.use((err: any, req: Request, res: Response, next: any) => {

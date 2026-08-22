@@ -6,7 +6,7 @@ import app from "./server/app";
 const PORT = 3000;
 
 async function startServer() {
-  // In development, hook up Vite middleware
+  // In development, mount Vite middleware after API routes
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -28,3 +28,4 @@ async function startServer() {
 }
 
 startServer();
+

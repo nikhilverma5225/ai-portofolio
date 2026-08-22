@@ -2,7 +2,7 @@ import JSZip from "jszip";
 import { ResumeData, PortfolioConfig } from "../types";
 
 export function getThemeClasses(theme: string, accent: string) {
-  const themes: Record<string, { bg: string; surface: string; text: string; textMuted: string; border: string; accentColor: string; accentHover: string; gradient: string }> = {
+  const baseThemes: Record<string, { bg: string; surface: string; text: string; textMuted: string; border: string; accentColor: string; accentHover: string; gradient: string; isLight?: boolean }> = {
     "modern-dark": {
       bg: "#0B0F19",
       surface: "#111827",
@@ -12,6 +12,7 @@ export function getThemeClasses(theme: string, accent: string) {
       accentColor: "#6C8EFF",
       accentHover: "#4B6EE6",
       gradient: "linear-gradient(135deg, rgba(108, 142, 255, 0.15) 0%, rgba(17, 24, 39, 0.6) 100%)",
+      isLight: false,
     },
     "slate-tech": {
       bg: "#0F172A",
@@ -22,6 +23,7 @@ export function getThemeClasses(theme: string, accent: string) {
       accentColor: "#38BDF8",
       accentHover: "#0284C7",
       gradient: "linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(30, 41, 59, 0.6) 100%)",
+      isLight: false,
     },
     "obsidian-gold": {
       bg: "#121214",
@@ -32,6 +34,7 @@ export function getThemeClasses(theme: string, accent: string) {
       accentColor: "#EAB308",
       accentHover: "#CA8A04",
       gradient: "linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, rgba(28, 28, 33, 0.6) 100%)",
+      isLight: false,
     },
     "midnight-emerald": {
       bg: "#061A14",
@@ -42,6 +45,7 @@ export function getThemeClasses(theme: string, accent: string) {
       accentColor: "#10B981",
       accentHover: "#059669",
       gradient: "linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(13, 46, 36, 0.6) 100%)",
+      isLight: false,
     },
     "crimson-velvet": {
       bg: "#150A0E",
@@ -52,26 +56,29 @@ export function getThemeClasses(theme: string, accent: string) {
       accentColor: "#F43F5E",
       accentHover: "#E11D48",
       gradient: "linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(36, 18, 26, 0.6) 100%)",
+      isLight: false,
     },
     "clean-light": {
       bg: "#F8FAFC",
       surface: "#FFFFFF",
       text: "#0F172A",
-      textMuted: "#64748B",
+      textMuted: "#475569",
       border: "#E2E8F0",
       accentColor: "#2563EB",
       accentHover: "#1D4ED8",
-      gradient: "linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(255, 255, 255, 0.9) 100%)",
+      gradient: "linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(255, 255, 255, 0.95) 100%)",
+      isLight: true,
     },
     "minimalist-ivory": {
       bg: "#FAF9F6",
       surface: "#FFFFFF",
       text: "#1C1917",
-      textMuted: "#78716C",
+      textMuted: "#57534E",
       border: "#E7E5E4",
-      accentColor: "#44403C",
-      accentHover: "#1C1917",
-      gradient: "linear-gradient(135deg, rgba(68, 64, 60, 0.05) 0%, rgba(255, 255, 255, 0.9) 100%)",
+      accentColor: "#10B981",
+      accentHover: "#059669",
+      gradient: "linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, rgba(255, 255, 255, 0.95) 100%)",
+      isLight: true,
     },
   };
 
@@ -84,13 +91,15 @@ export function getThemeClasses(theme: string, accent: string) {
     cyan: { color: "#06B6D4", hover: "#0891B2" },
   };
 
-  const selectedTheme = themes[theme] || themes["modern-dark"];
+  const template = baseThemes[theme] || baseThemes["modern-dark"];
+  const result = { ...template };
+
   if (accent && accentOverrides[accent]) {
-    selectedTheme.accentColor = accentOverrides[accent].color;
-    selectedTheme.accentHover = accentOverrides[accent].hover;
+    result.accentColor = accentOverrides[accent].color;
+    result.accentHover = accentOverrides[accent].hover;
   }
 
-  return selectedTheme;
+  return result;
 }
 
 export function generateStandaloneHTML(resume: ResumeData, config: PortfolioConfig): string {
