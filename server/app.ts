@@ -39,8 +39,10 @@ function maskApiKey(key?: string): string {
 
 // Free-tier optimized models in order of speed and quota availability
 const CANDIDATE_MODELS = [
-  "gemini-3.1-flash-lite",
-  "gemini-3.6-flash",
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+  "gemini-2.5-pro",
   "gemini-3.7-flash"
 ];
 
@@ -51,7 +53,7 @@ async function callGeminiWithFallback(params: {
 }): Promise<{ text: string; usedModel: string }> {
   const ai = getGeminiClient();
   let lastError: any = null;
-  const timeoutMs = params.timeoutMs || 25000;
+  const timeoutMs = params.timeoutMs || 8500;
 
   const mergedConfig = {
     ...params.config,
@@ -66,7 +68,7 @@ async function callGeminiWithFallback(params: {
   for (const model of CANDIDATE_MODELS) {
     try {
       const startTime = Date.now();
-      console.log(`[Gemini Live API] -> Outbound request to Google Generative Language API (Model: ${model})`);
+      console.log(`[Gemini API] -> Calling Google Generative Language API (${model})...`);
 
       const generatePromise = ai.models.generateContent({
         model,
@@ -82,13 +84,13 @@ async function callGeminiWithFallback(params: {
 
       if (response && response.text) {
         const duration = Date.now() - startTime;
-        console.log(`[Gemini Live API] <- Response received from ${model} in ${duration}ms`);
+        console.log(`[Gemini API] <- Response received from ${model} in ${duration}ms`);
         return { text: response.text, usedModel: model };
       }
     } catch (err: any) {
       lastError = err;
       const errorMsg = err?.message || JSON.stringify(err);
-      console.warn(`[Gemini Live API] Attempt with ${model} failed:`, errorMsg);
+      console.warn(`[Gemini API] Attempt with ${model} failed:`, errorMsg);
       continue;
     }
   }
