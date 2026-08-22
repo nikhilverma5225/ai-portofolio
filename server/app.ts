@@ -7,10 +7,6 @@ import { extractResumePhoto } from "./imageExtractor";
 // Load environment variables
 dotenv.config();
 
-const DEFAULT_API_KEY = "AQ.Ab8RN6JR-JA-jlPViTr-THtkJxFFAMQhI5UHq0-vn6OFqHkYyA";
-const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT || "projects/956120291231";
-const PROJECT_NUMBER = process.env.GOOGLE_CLOUD_PROJECT_NUMBER || "956120291231";
-
 export const app = express();
 
 // Body parsing middleware (50mb limit for PDF/base64 uploads)
@@ -70,7 +66,7 @@ async function callGeminiWithFallback(params: {
   for (const model of CANDIDATE_MODELS) {
     try {
       const startTime = Date.now();
-      console.log(`[Gemini Live API] -> Outbound request to Google Generative Language API (Model: ${model}, Project: ${PROJECT_ID})`);
+      console.log(`[Gemini Live API] -> Outbound request to Google Generative Language API (Model: ${model})`);
 
       const generatePromise = ai.models.generateContent({
         model,
@@ -131,12 +127,9 @@ const router = Router();
 // Health check endpoint
 router.get("/health", async (req: Request, res: Response) => {
   const startTime = Date.now();
-  let rawKey = process.env.GEMINI_API_KEY;
-  if (!rawKey || rawKey === "MY_GEMINI_API_KEY") {
-    rawKey = DEFAULT_API_KEY;
-  }
+  const rawKey = process.env.GEMINI_API_KEY;
 
-  const isKeyConfigured = Boolean(rawKey && rawKey.trim().length > 5);
+  const isKeyConfigured = Boolean(rawKey && rawKey.trim().length > 5 && rawKey !== "MY_GEMINI_API_KEY");
   const latencyMs = Math.max(Date.now() - startTime, 15);
 
   if (isKeyConfigured) {
@@ -145,8 +138,6 @@ router.get("/health", async (req: Request, res: Response) => {
       model: "gemini-3.6-flash",
       maskedKey: maskApiKey(rawKey),
       latencyMs,
-      projectId: PROJECT_ID,
-      projectNumber: PROJECT_NUMBER,
       message: "API Key Active (Free Tier Supported)",
     });
   } else {
@@ -155,8 +146,6 @@ router.get("/health", async (req: Request, res: Response) => {
       model: "gemini-3.6-flash",
       maskedKey: "Not Set",
       latencyMs: 0,
-      projectId: PROJECT_ID,
-      projectNumber: PROJECT_NUMBER,
       error: "Missing GEMINI_API_KEY in environment variables",
     });
   }
