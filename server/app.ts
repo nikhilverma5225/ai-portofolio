@@ -21,11 +21,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// Free-tier and verified active models for your API key
+// Active Google Gemini models recommended by Google AI Studio API
 const CANDIDATE_MODELS = [
   "gemini-3.6-flash",
-  "gemini-3.1-flash-lite",
+  "gemini-3.5-flash-lite",
+  "gemini-3.5-flash",
   "gemini-3.7-flash",
+  "gemini-2.5-flash",
   "gemini-flash-latest"
 ];
 
@@ -56,7 +58,7 @@ async function callGeminiWithFallback(params: {
 }): Promise<{ text: string; usedModel: string }> {
   const ai = getGeminiClient();
   let lastError: any = null;
-  const timeoutMs = params.timeoutMs || 35000;
+  const timeoutMs = params.timeoutMs || 18000;
 
   let normalizedContents = params.contents;
   if (normalizedContents && typeof normalizedContents === "object" && !Array.isArray(normalizedContents) && Array.isArray(normalizedContents.parts)) {
@@ -64,32 +66,43 @@ async function callGeminiWithFallback(params: {
   }
 
   for (const model of CANDIDATE_MODELS) {
-    try {
-      const startTime = Date.now();
-      console.log(`[Gemini API] -> Calling Google Generative Language API (${model})...`);
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const startTime = Date.now();
+        console.log(`[Gemini API] -> Calling Google Generative Language API (${model}, try ${attempt + 1})...`);
 
-      const generatePromise = ai.models.generateContent({
-        model,
-        contents: normalizedContents,
-        config: params.config,
-      });
+        const generatePromise = ai.models.generateContent({
+          model,
+          contents: normalizedContents,
+          config: params.config,
+        });
 
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`Timeout after ${timeoutMs / 1000}s on ${model}`)), timeoutMs)
-      );
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(`Timeout after ${timeoutMs / 1000}s on ${model}`)), timeoutMs)
+        );
 
-      const response = (await Promise.race([generatePromise, timeoutPromise])) as any;
+        const response = (await Promise.race([generatePromise, timeoutPromise])) as any;
 
-      if (response && response.text) {
-        const duration = Date.now() - startTime;
-        console.log(`[Gemini API] <- Response received from ${model} in ${duration}ms`);
-        return { text: response.text, usedModel: model };
+        if (response && response.text) {
+          const duration = Date.now() - startTime;
+          console.log(`[Gemini API] <- Response received from ${model} in ${duration}ms`);
+          return { text: response.text, usedModel: model };
+        }
+      } catch (err: any) {
+        lastError = err;
+        const errorMsg = err?.message || JSON.stringify(err);
+        console.warn(`[Gemini API] Attempt with ${model} (try ${attempt + 1}) failed:`, errorMsg);
+        
+        // If 404 (model not found/deprecated), don't retry same model
+        if (errorMsg.includes("404") || errorMsg.includes("NOT_FOUND") || errorMsg.includes("no longer available")) {
+          break;
+        }
+
+        // If 503 or 429, wait 1s before retry
+        if (attempt === 0 && (errorMsg.includes("503") || errorMsg.includes("UNAVAILABLE") || errorMsg.includes("429"))) {
+          await new Promise((r) => setTimeout(r, 1000));
+        }
       }
-    } catch (err: any) {
-      lastError = err;
-      const errorMsg = err?.message || JSON.stringify(err);
-      console.warn(`[Gemini API] Attempt with ${model} failed:`, errorMsg);
-      continue;
     }
   }
 
@@ -124,8 +137,8 @@ function getValidStatusCode(err: any): number {
 // Router containing all API endpoints
 const router = Router();
 
-// Root API status endpoint
-router.get("/", (req: Request, res: Response) => {
+// API status endpoint
+router.get("/status", (req: Request, res: Response) => {
   res.json({
     status: "online",
     service: "AI-Assisted Portfolio Generator API",
@@ -144,7 +157,7 @@ router.get("/health", async (req: Request, res: Response) => {
   if (isKeyConfigured) {
     return res.json({
       ok: true,
-      model: "gemini-3.6-flash",
+      model: "gemini-2.5-flash",
       maskedKey: maskApiKey(rawKey),
       latencyMs,
       message: "API Key Active (Free Tier Supported)",
@@ -152,7 +165,7 @@ router.get("/health", async (req: Request, res: Response) => {
   } else {
     return res.json({
       ok: false,
-      model: "gemini-3.6-flash",
+      model: "gemini-2.5-flash",
       maskedKey: "Not Set",
       latencyMs: 0,
       error: "Missing GEMINI_API_KEY in environment variables",
@@ -556,8 +569,9 @@ Provide only the refined text.`,
   }
 });
 
-// Mount router ONLY on /api so root path '/' serves the Vite frontend app
+// Mount router on /api and as router handler for Vercel serverless
 app.use("/api", router);
+app.use(router);
 
 // Global error handler so serverless never crashes with FUNCTION_INVOCATION_FAILED
 app.use((err: any, req: Request, res: Response, next: any) => {
