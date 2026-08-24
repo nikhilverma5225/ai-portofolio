@@ -126,7 +126,7 @@ Open `http://localhost:3000` in your browser.
 This project was built as a group bootcamp project by a team of 5 students from **GLA University**:
 
 - **Nikhil Verma**
-- **Harshit Verma**
+- **Harsh Verma**
 - **Ravikant Singh**
 - **Abhinav Dixit**
 - **Udit Indoliya**
