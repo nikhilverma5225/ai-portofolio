@@ -16,16 +16,16 @@ export const StepNavigation: React.FC<StepNavigationProps> = ({
   const steps = [
     {
       id: 1,
-      title: "1. Upload & Extract",
-      desc: "In-memory document ingestion & fact extraction",
+      title: "1. Ingest & Extract",
+      desc: "Document extraction & zero-hallucination fact mapping",
       icon: FileUp,
       ready: true,
       completed: hasExtractedData,
     },
     {
       id: 2,
-      title: "2. Approve & Export",
-      desc: "Portfolio style types, live studio preview, & download bundles",
+      title: "2. Curate & Export",
+      desc: "Theme orchestration, live preview & bundle generation",
       icon: Sparkles,
       ready: hasExtractedData,
       completed: false,
@@ -46,28 +46,28 @@ export const StepNavigation: React.FC<StepNavigationProps> = ({
               id={`step-nav-btn-${step.id}`}
               disabled={!isEnabled}
               onClick={() => isEnabled && onSelectStep(step.id)}
-              className={`text-left p-3.5 rounded-xl border transition-all relative overflow-hidden flex items-center justify-between gap-3 ${
+              className={`text-left p-3.5 rounded-xl border transition-all relative flex items-center justify-between gap-3 ${
                 isActive
-                  ? "bg-gradient-to-r from-blue-900/40 via-slate-900/90 to-indigo-900/40 border-blue-500/60 shadow-lg shadow-blue-950/40 text-white ring-1 ring-blue-500/30"
+                  ? "bg-[#181e2b] border-amber-400/40 text-slate-100 shadow-lg shadow-black/40 ring-1 ring-amber-400/20"
                   : isEnabled
-                  ? "bg-slate-900/60 hover:bg-slate-800/80 border-slate-800 text-slate-300 hover:border-slate-700"
-                  : "bg-slate-950/40 border-slate-900 text-slate-600 opacity-60 cursor-not-allowed"
+                  ? "bg-[#131720] hover:bg-[#181e2b] border-white/[0.08] text-slate-300 hover:border-white/[0.14]"
+                  : "bg-[#0f1219]/60 border-white/[0.04] text-slate-600 opacity-50 cursor-not-allowed"
               }`}
             >
               <div className="flex items-center gap-3">
                 <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center font-mono text-xs font-semibold shrink-0 transition-colors ${
                     isActive
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
+                      ? "bg-amber-400 text-slate-950 shadow-sm"
                       : step.completed
-                      ? "bg-emerald-600 text-white"
-                      : "bg-slate-800 text-slate-400"
+                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                      : "bg-white/[0.06] text-slate-400 border border-white/[0.08]"
                   }`}
                 >
-                  {step.completed && !isActive ? <Check className="w-4 h-4" /> : step.id}
+                  {step.completed && !isActive ? <Check className="w-3.5 h-3.5" /> : `0${step.id}`}
                 </div>
                 <div>
-                  <div className={`font-bold text-sm tracking-tight ${isActive ? "text-white" : "text-slate-200"}`}>
+                  <div className={`font-display font-semibold text-sm tracking-tight ${isActive ? "text-slate-100" : "text-slate-300"}`}>
                     {step.title}
                   </div>
                   <div className="text-xs text-slate-400 line-clamp-1 mt-0.5">
@@ -77,21 +77,21 @@ export const StepNavigation: React.FC<StepNavigationProps> = ({
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                <Icon className={`w-4 h-4 ${isActive ? "text-blue-400" : "text-slate-500"}`} />
+                <Icon className={`w-4 h-4 ${isActive ? "text-amber-400" : "text-slate-500"}`} />
                 {isActive && (
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-800/40">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
                     Active
                   </span>
                 )}
                 {step.completed && !isActive && (
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/40">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-300 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20">
                     Ready
                   </span>
                 )}
               </div>
 
               {isActive && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500" />
+                <div className="absolute bottom-0 left-3 right-3 h-[2px] bg-amber-400 rounded-full" />
               )}
             </button>
           );

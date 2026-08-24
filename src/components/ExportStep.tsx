@@ -362,18 +362,18 @@ export const ExportStep: React.FC<ExportStepProps> = ({
       />
 
       {/* SECTION 1: PORTFOLIO STYLE TYPE BUTTONS & PRESETS */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-2xl space-y-4">
+      <div className="bg-[#131720] border border-white/[0.08] rounded-2xl p-5 sm:p-6 shadow-2xl space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+            <div className="w-8 h-8 rounded-lg bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400">
               <Palette className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                Portfolio Style Types & Themes
+              <h2 className="font-display text-base sm:text-lg font-bold text-slate-100 tracking-tight">
+                Portfolio Style Archetypes & Themes
               </h2>
               <p className="text-xs text-slate-400">
-                Click any style type to instantly restyle your live portfolio
+                Instantly restyle your portfolio with crafted typographic palettes
               </p>
             </div>
           </div>
@@ -384,10 +384,10 @@ export const ExportStep: React.FC<ExportStepProps> = ({
                 id="btn-ai-refine"
                 onClick={() => onRefineWithAI(config.persona)}
                 disabled={isRefining}
-                className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white flex items-center gap-1.5 shadow-md shadow-blue-900/30 transition"
-                title="Use Gemini 3.7 to polish summary & headline"
+                className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#181e2b] hover:bg-[#222a3a] text-slate-200 border border-white/[0.08] flex items-center gap-1.5 transition shadow-sm"
+                title="Use Gemini AI to polish summary & headline"
               >
-                <Sparkles className={`w-3.5 h-3.5 ${isRefining ? "animate-spin text-blue-200" : "text-amber-300"}`} />
+                <Sparkles className={`w-3.5 h-3.5 ${isRefining ? "animate-spin text-amber-400" : "text-amber-400"}`} />
                 <span>{isRefining ? "Polishing Copy..." : "AI Headline Polish"}</span>
               </button>
             )}
@@ -405,30 +405,30 @@ export const ExportStep: React.FC<ExportStepProps> = ({
                 onClick={() => handleApplyPreset(preset)}
                 className={`p-3 rounded-xl border text-left transition-all duration-150 relative overflow-hidden flex flex-col justify-between group ${
                   isSelected
-                    ? "bg-slate-800/90 border-blue-500 ring-2 ring-blue-500/30 shadow-lg shadow-blue-950/40 text-white"
-                    : "bg-slate-950/60 hover:bg-slate-800/60 border-slate-800 text-slate-300 hover:border-slate-700"
+                    ? "bg-[#181e2b] border-amber-400/60 ring-1 ring-amber-400/30 text-slate-100 shadow-md"
+                    : "bg-[#0c0e12] hover:bg-[#181e2b]/60 border-white/[0.06] text-slate-400 hover:text-slate-200 hover:border-white/[0.12]"
                 }`}
               >
                 <div className="flex items-center justify-between w-full mb-2">
                   <div className="flex items-center gap-1.5">
-                    <span className={`w-3 h-3 rounded-full ${preset.accentBg} shrink-0 ring-1 ring-white/20`} />
+                    <span className={`w-2.5 h-2.5 rounded-full ${preset.accentBg} shrink-0 ring-1 ring-white/20`} />
                     <span className="text-[10px] font-mono font-semibold text-slate-400 uppercase">
                       {preset.badge}
                     </span>
                   </div>
-                  {isSelected && <Check className="w-3.5 h-3.5 text-blue-400" />}
+                  {isSelected && <Check className="w-3.5 h-3.5 text-amber-400" />}
                 </div>
 
-                <div className="font-bold text-xs text-white group-hover:text-blue-300 transition-colors">
+                <div className="font-display font-semibold text-xs text-slate-100 group-hover:text-amber-300 transition-colors">
                   {preset.name}
                 </div>
 
-                <div className="text-[10px] text-slate-400 line-clamp-1 mt-0.5">
+                <div className="text-[10px] text-slate-400 line-clamp-1 mt-0.5 font-mono">
                   {preset.font === "jetbrains-mono" ? "Mono Code" : preset.font === "playfair" ? "Serif Luxury" : "Clean Sans"}
                 </div>
 
                 {isSelected && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-400" />
                 )}
               </button>
             );
@@ -436,7 +436,7 @@ export const ExportStep: React.FC<ExportStepProps> = ({
         </div>
 
         {/* Fine-Tuning Accents & Typography Controls */}
-        <div className="pt-3 border-t border-slate-800/80 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div className="pt-3 border-t border-white/[0.08] grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
           
           {/* Accent Color Chips */}
           <div>
@@ -925,13 +925,13 @@ export const ExportStep: React.FC<ExportStepProps> = ({
       </div>
 
       {/* SECTION 4: HUMAN APPROVAL GATEWAY */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+      <div className="bg-[#131720] border border-white/[0.08] rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
-            <ShieldCheck className="w-6 h-6" />
+          <div className="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400">
+            <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg sm:text-xl font-bold text-white">
+            <h2 className="font-display text-lg sm:text-xl font-bold text-slate-100">
               Human Factual Approval Checklist
             </h2>
             <p className="text-xs text-slate-400">
@@ -941,53 +941,53 @@ export const ExportStep: React.FC<ExportStepProps> = ({
         </div>
 
         <div className="space-y-3 pt-2">
-          <label className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+          <label className="flex items-start gap-3 p-3.5 rounded-xl bg-[#0c0e12] border border-white/[0.08] cursor-pointer hover:border-white/[0.16] transition">
             <input
               type="checkbox"
               checked={agreedFacts}
               onChange={(e) => setAgreedFacts(e.target.checked)}
-              className="mt-0.5 w-4 h-4 rounded text-blue-600 bg-slate-900 border-slate-700 focus:ring-0 cursor-pointer"
+              className="mt-0.5 w-4 h-4 rounded text-amber-500 bg-[#131720] border-white/[0.2] focus:ring-0 cursor-pointer accent-amber-400"
             />
             <div className="text-xs text-slate-300">
-              <span className="font-semibold text-white block">Verified Factual Integrity</span>
+              <span className="font-semibold text-slate-100 block">Verified Factual Integrity</span>
               I confirm that all candidate experience items, educational degrees, and dates match genuine records.
             </div>
           </label>
 
-          <label className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+          <label className="flex items-start gap-3 p-3.5 rounded-xl bg-[#0c0e12] border border-white/[0.08] cursor-pointer hover:border-white/[0.16] transition">
             <input
               type="checkbox"
               checked={agreedPrivacy}
               onChange={(e) => setAgreedPrivacy(e.target.checked)}
-              className="mt-0.5 w-4 h-4 rounded text-blue-600 bg-slate-900 border-slate-700 focus:ring-0 cursor-pointer"
+              className="mt-0.5 w-4 h-4 rounded text-amber-500 bg-[#131720] border-white/[0.2] focus:ring-0 cursor-pointer accent-amber-400"
             />
             <div className="text-xs text-slate-300">
-              <span className="font-semibold text-white block">Contact Details & Privacy Review</span>
+              <span className="font-semibold text-slate-100 block">Contact Details & Privacy Review</span>
               I have checked email, phone, location, and social links for accuracy and consent.
             </div>
           </label>
 
-          <label className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+          <label className="flex items-start gap-3 p-3.5 rounded-xl bg-[#0c0e12] border border-white/[0.08] cursor-pointer hover:border-white/[0.16] transition">
             <input
               type="checkbox"
               checked={agreedDesign}
               onChange={(e) => setAgreedDesign(e.target.checked)}
-              className="mt-0.5 w-4 h-4 rounded text-blue-600 bg-slate-900 border-slate-700 focus:ring-0 cursor-pointer"
+              className="mt-0.5 w-4 h-4 rounded text-amber-500 bg-[#131720] border-white/[0.2] focus:ring-0 cursor-pointer accent-amber-400"
             />
             <div className="text-xs text-slate-300">
-              <span className="font-semibold text-white block">Presentation & Styling Approval</span>
+              <span className="font-semibold text-slate-100 block">Presentation & Styling Approval</span>
               I approve the selected theme, electric accent, typography, and section visibility.
             </div>
           </label>
         </div>
 
         {isApproved ? (
-          <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/50 text-emerald-300 text-xs flex items-center gap-2">
+          <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
             <span className="font-semibold">All approvals confirmed. Download packages are unlocked!</span>
           </div>
         ) : (
-          <div className="text-xs text-slate-500 text-center">
+          <div className="text-xs text-slate-500 text-center font-mono">
             Please check the 3 verification boxes above to unlock final export options.
           </div>
         )}
@@ -997,16 +997,16 @@ export const ExportStep: React.FC<ExportStepProps> = ({
       <div className={`grid grid-cols-1 md:grid-cols-2 gap-5 transition-opacity duration-200 ${isApproved ? "opacity-100" : "opacity-50 pointer-events-none"}`}>
         
         {/* Option 1: Complete ZIP Bundle */}
-        <div className="bg-slate-900/80 border border-slate-800 hover:border-blue-500/50 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4 transition">
+        <div className="bg-[#131720] border border-white/[0.08] hover:border-amber-400/40 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4 transition">
           <div>
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 flex items-center justify-center mb-3">
               <PackageCheck className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white mb-1">
+            <h3 className="font-display text-base font-bold text-slate-100 mb-1">
               Complete ZIP Package (.zip)
             </h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Contains production-ready <code className="text-blue-300">index.html</code>, <code className="text-blue-300">portfolio.json</code>, and deployment <code className="text-blue-300">README.txt</code> ready for GitHub Pages, Netlify, or Vercel.
+              Contains production-ready <code className="text-amber-300 font-mono">index.html</code>, <code className="text-amber-300 font-mono">portfolio.json</code>, and deployment instructions ready for GitHub Pages, Netlify, or Vercel.
             </p>
           </div>
 
@@ -1014,7 +1014,7 @@ export const ExportStep: React.FC<ExportStepProps> = ({
             id="btn-download-zip"
             disabled={!isApproved || isZipping}
             onClick={handleDownloadZip}
-            className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition"
+            className="w-full py-3 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition"
           >
             <Download className="w-4 h-4" />
             <span>{isZipping ? "Packaging ZIP..." : "Download ZIP Package"}</span>
@@ -1022,12 +1022,12 @@ export const ExportStep: React.FC<ExportStepProps> = ({
         </div>
 
         {/* Option 2: Standalone Offline HTML */}
-        <div className="bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4 transition">
+        <div className="bg-[#131720] border border-white/[0.08] hover:border-amber-400/40 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4 transition">
           <div>
-            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 flex items-center justify-center mb-3">
               <FileCode className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white mb-1">
+            <h3 className="font-display text-base font-bold text-slate-100 mb-1">
               Standalone Offline HTML (.html)
             </h3>
             <p className="text-xs text-slate-400 leading-relaxed">
@@ -1040,7 +1040,7 @@ export const ExportStep: React.FC<ExportStepProps> = ({
               id="btn-download-html"
               disabled={!isApproved}
               onClick={handleDownloadHtml}
-              className="flex-1 py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 transition"
+              className="flex-1 py-3 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition"
             >
               <Download className="w-4 h-4" />
               <span>Download HTML</span>
@@ -1050,7 +1050,7 @@ export const ExportStep: React.FC<ExportStepProps> = ({
               id="btn-copy-html"
               disabled={!isApproved}
               onClick={handleCopyHtml}
-              className="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+              className="p-3 rounded-xl bg-[#181e2b] hover:bg-[#222a3a] text-slate-300 border border-white/[0.08] transition"
               title="Copy HTML Source to Clipboard"
             >
               {isCopied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
@@ -1059,16 +1059,16 @@ export const ExportStep: React.FC<ExportStepProps> = ({
         </div>
 
         {/* Option 3: Printable PDF Integration */}
-        <div className="bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4 transition">
+        <div className="bg-[#131720] border border-white/[0.08] hover:border-amber-400/40 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4 transition">
           <div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center mb-3">
               <Printer className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white mb-1">
+            <h3 className="font-display text-base font-bold text-slate-100 mb-1">
               Print-to-PDF Integration
             </h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Opens browser print dialog with dedicated print stylesheets (<code className="text-emerald-300">@media print</code>) for high-resolution vector PDF export.
+              Opens browser print dialog with dedicated print stylesheets (<code className="text-emerald-300 font-mono">@media print</code>) for high-resolution vector PDF export.
             </p>
           </div>
 
@@ -1076,7 +1076,7 @@ export const ExportStep: React.FC<ExportStepProps> = ({
             id="btn-print-pdf"
             disabled={!isApproved}
             onClick={handlePrintPdf}
-            className="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-600/30 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition"
+            className="w-full py-3 px-4 rounded-xl bg-[#181e2b] hover:bg-[#222a3a] text-emerald-300 border border-emerald-500/20 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition"
           >
             <Printer className="w-4 h-4" />
             <span>Print to PDF</span>
@@ -1084,12 +1084,12 @@ export const ExportStep: React.FC<ExportStepProps> = ({
         </div>
 
         {/* Option 4: Structured JSON Schema */}
-        <div className="bg-slate-900/80 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4 transition">
+        <div className="bg-[#131720] border border-white/[0.08] hover:border-amber-400/40 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-4 transition">
           <div>
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 flex items-center justify-center mb-3">
               <FileJson className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-white mb-1">
+            <h3 className="font-display text-base font-bold text-slate-100 mb-1">
               Structured JSON Data (.json)
             </h3>
             <p className="text-xs text-slate-400 leading-relaxed">
@@ -1101,7 +1101,7 @@ export const ExportStep: React.FC<ExportStepProps> = ({
             id="btn-download-json"
             disabled={!isApproved}
             onClick={handleDownloadJson}
-            className="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-600/30 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition"
+            className="w-full py-3 px-4 rounded-xl bg-[#181e2b] hover:bg-[#222a3a] text-amber-300 border border-amber-400/20 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition"
           >
             <Download className="w-4 h-4" />
             <span>Download JSON</span>
@@ -1111,23 +1111,23 @@ export const ExportStep: React.FC<ExportStepProps> = ({
       </div>
 
       {/* SECTION 6: FREE HOSTING QUICK GUIDE */}
-      <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-6 text-xs text-slate-400 space-y-3">
+      <div className="bg-[#0c0e12] border border-white/[0.08] rounded-2xl p-6 text-xs text-slate-400 space-y-3">
         <div className="flex items-center gap-2 text-slate-200 font-bold">
-          <Globe className="w-4 h-4 text-blue-400" />
-          <span>Quick 1-Minute Free Hosting Instructions</span>
+          <Globe className="w-4 h-4 text-amber-400" />
+          <span className="font-display">Quick 1-Minute Free Hosting Instructions</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] leading-relaxed">
-          <div className="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+          <div className="bg-[#131720] p-3 rounded-xl border border-white/[0.08]">
             <span className="font-semibold text-slate-200 block mb-1">1. GitHub Pages (Free)</span>
-            Create a repository named <span className="font-mono text-blue-300">username.github.io</span>, upload <span className="font-mono">index.html</span>, and enable Pages under Repo Settings.
+            Create a repository named <span className="font-mono text-amber-300">username.github.io</span>, upload <span className="font-mono">index.html</span>, and enable Pages under Repo Settings.
           </div>
-          <div className="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+          <div className="bg-[#131720] p-3 rounded-xl border border-white/[0.08]">
             <span className="font-semibold text-slate-200 block mb-1">2. Netlify Drop (Instant)</span>
-            Navigate to <span className="font-mono text-blue-300">app.netlify.com/drop</span> and drag the extracted ZIP folder for instant SSL live URL.
+            Navigate to <span className="font-mono text-amber-300">app.netlify.com/drop</span> and drag the extracted ZIP folder for instant SSL live URL.
           </div>
-          <div className="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+          <div className="bg-[#131720] p-3 rounded-xl border border-white/[0.08]">
             <span className="font-semibold text-slate-200 block mb-1">3. Offline / Local</span>
-            Double-click the downloaded <span className="font-mono text-blue-300">index.html</span> file to open directly in Chrome, Firefox, Safari, or Edge.
+            Double-click the downloaded <span className="font-mono text-amber-300">index.html</span> file to open directly in Chrome, Firefox, Safari, or Edge.
           </div>
         </div>
       </div>

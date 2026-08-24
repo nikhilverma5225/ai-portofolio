@@ -2,19 +2,15 @@ import React, { useState, useRef } from "react";
 import { 
   UploadCloud, 
   FileText, 
-  FileCode, 
-  Sparkles, 
-  ShieldAlert, 
   Image as ImageIcon, 
   Trash2, 
   Info, 
   CheckCircle2, 
   AlertCircle, 
-  Layers,
   ArrowRight,
-  Loader2
+  Loader2,
+  FileCheck
 } from "lucide-react";
-import { SAMPLE_RESUMES } from "../data/sampleResumes";
 
 interface ResumeInputStepProps {
   onAnalyze: (payload: { text?: string; fileBase64?: string; mimeType?: string; fileName?: string; photoBase64?: string; stream: string }) => void;
@@ -77,7 +73,6 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
         mimeType: file.type || "application/octet-stream",
       });
 
-      // If it's a plain text file, also read as text for preview
       if (file.type === "text/plain" || file.name.endsWith(".txt")) {
         const textReader = new FileReader();
         textReader.onload = () => setResumeText(textReader.result as string);
@@ -144,18 +139,18 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       
       {/* Privacy Notice Banner */}
-      <div className="mb-6 p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex items-start gap-3 shadow-md">
-        <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 shrink-0">
+      <div className="mb-6 p-4 rounded-xl bg-[#131720] border border-white/[0.08] flex items-start gap-3 shadow-sm">
+        <div className="p-2 rounded-lg bg-amber-400/10 text-amber-400 border border-amber-400/20 shrink-0">
           <Info className="w-4 h-4" />
         </div>
         <div className="text-xs text-slate-300 leading-relaxed">
-          <span className="font-semibold text-slate-100">🛡️ Privacy First & In-Memory Processing:</span> Resumes are processed strictly in-memory and sent directly to Google Gemini API via secure SSL. No documents or personal records are stored on disk.
+          <span className="font-semibold text-slate-100">In-Memory Execution:</span> Documents are parsed in volatile container memory and verified via Google Gemini models without persistent cloud disk storage.
         </div>
       </div>
 
       {/* Error Alert if any */}
       {errorMessage && (
-        <div className="mb-6 p-4 rounded-xl bg-rose-950/40 border border-rose-600/40 text-rose-200 flex items-start gap-3">
+        <div className="mb-6 p-4 rounded-xl bg-rose-950/30 border border-rose-500/40 text-rose-200 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
           <div className="text-xs sm:text-sm">
             <div className="font-bold text-rose-300">API Execution Notice</div>
@@ -165,9 +160,9 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
                 href="https://aistudio.google.com/app/apikey"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-400 hover:text-blue-300 underline"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-amber-400 hover:text-amber-300 underline"
               >
-                Get or verify your Google AI Studio API Key ↗
+                Verify Google AI Studio API Key ↗
               </a>
             </div>
           </div>
@@ -176,22 +171,22 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Main Ingestion Card (Left 8 Cols) */}
-        <div className="lg:col-span-8 bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-sm">
+        {/* Main Ingestion Card */}
+        <div className="lg:col-span-8 bg-[#131720] border border-white/[0.08] rounded-2xl p-6 shadow-xl">
           
           {/* Ingestion Tabs */}
-          <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-4 mb-6">
             <div className="flex items-center gap-2">
               <button
                 id="tab-upload-file"
                 onClick={() => setActiveTab("upload")}
                 className={`flex items-center gap-2 text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl transition ${
                   activeTab === "upload"
-                    ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                    ? "bg-[#181e2b] text-slate-100 border border-white/[0.12] shadow-sm"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
                 }`}
               >
-                <UploadCloud className="w-4 h-4" />
+                <UploadCloud className="w-4 h-4 text-amber-400" />
                 Upload Document (.pdf, .docx, .txt)
               </button>
 
@@ -200,17 +195,17 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
                 onClick={() => setActiveTab("paste")}
                 className={`flex items-center gap-2 text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl transition ${
                   activeTab === "paste"
-                    ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                    ? "bg-[#181e2b] text-slate-100 border border-white/[0.12] shadow-sm"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
                 }`}
               >
-                <FileText className="w-4 h-4" />
+                <FileText className="w-4 h-4 text-amber-400" />
                 Direct Text Paste
               </button>
             </div>
 
-            <div className="hidden sm:flex items-center gap-1 text-[11px] text-slate-400">
-              <Layers className="w-3.5 h-3.5 text-blue-400" />
+            <div className="hidden sm:flex items-center gap-1 text-[11px] font-mono text-slate-400">
+              <FileCheck className="w-3.5 h-3.5 text-amber-400" />
               <span>Universal Parser</span>
             </div>
           </div>
@@ -224,12 +219,12 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-3 ${
+                className={`border border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-3 ${
                   dragActive
-                    ? "border-blue-400 bg-blue-950/20"
+                    ? "border-amber-400 bg-amber-400/5"
                     : selectedFile
-                    ? "border-emerald-500/50 bg-emerald-950/10"
-                    : "border-slate-700/80 hover:border-slate-600 bg-slate-950/40 hover:bg-slate-900/40"
+                    ? "border-emerald-500/40 bg-emerald-500/5"
+                    : "border-white/[0.12] hover:border-white/[0.24] bg-[#0c0e12]/60 hover:bg-[#0c0e12]/90"
                 }`}
               >
                 <input
@@ -240,12 +235,12 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
                   onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
                 />
 
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition ${
+                <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition ${
                   selectedFile
                     ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                    : "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                    : "bg-[#181e2b] text-amber-400 border border-white/[0.08]"
                 }`}>
-                  {selectedFile ? <CheckCircle2 className="w-8 h-8" /> : <UploadCloud className="w-8 h-8" />}
+                  {selectedFile ? <CheckCircle2 className="w-7 h-7" /> : <UploadCloud className="w-7 h-7" />}
                 </div>
 
                 <div>
@@ -253,14 +248,14 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
                     {selectedFile ? selectedFile.name : "Drag & drop your resume or click to browse"}
                   </div>
                   <p className="text-xs text-slate-400 mt-1">
-                    Supports Adobe PDF (.pdf), Microsoft Word (.docx), Image (.png, .jpg), and Plain Text (.txt) up to 5MB
+                    Supports Adobe PDF (.pdf), Microsoft Word (.docx), and Plain Text (.txt) up to 5MB
                   </p>
                 </div>
 
                 {selectedFile && (
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-xs text-emerald-400 font-medium px-2.5 py-1 rounded-md bg-emerald-950/60 border border-emerald-800/40">
-                      {(selectedFile.size / 1024).toFixed(1)} KB Ready
+                    <span className="text-xs text-emerald-300 font-mono px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/20">
+                      {(selectedFile.size / 1024).toFixed(1)} KB Ingested
                     </span>
                     <button
                       onClick={(e) => {
@@ -268,7 +263,7 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
                         setSelectedFile(null);
                         setResumeText("");
                       }}
-                      className="p-1 rounded-md bg-slate-800 hover:bg-rose-900/40 text-slate-400 hover:text-rose-300 transition"
+                      className="p-1 rounded bg-[#181e2b] hover:bg-rose-950/50 text-slate-400 hover:text-rose-300 border border-white/[0.08] transition"
                       title="Remove file"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -277,54 +272,54 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
                 )}
               </div>
 
-              {/* Document Format Badges */}
+              {/* Format Details */}
               <div className="grid grid-cols-3 gap-3 pt-2">
-                <div className="p-3 rounded-xl bg-slate-950/50 border border-slate-800/80 text-center">
-                  <div className="text-xs font-bold text-slate-200">PDF Resumes</div>
-                  <div className="text-[11px] text-slate-400">Native multimodal layout parsing</div>
+                <div className="p-3 rounded-xl bg-[#0c0e12]/60 border border-white/[0.06] text-center">
+                  <div className="text-xs font-semibold text-slate-200">PDF Resumes</div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">Multimodal visual layout parsing</div>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-950/50 border border-slate-800/80 text-center">
-                  <div className="text-xs font-bold text-slate-200">Word .docx</div>
-                  <div className="text-[11px] text-slate-400">In-memory XML text extractor</div>
+                <div className="p-3 rounded-xl bg-[#0c0e12]/60 border border-white/[0.06] text-center">
+                  <div className="text-xs font-semibold text-slate-200">Word .docx</div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">In-memory XML schema extraction</div>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-950/50 border border-slate-800/80 text-center">
-                  <div className="text-xs font-bold text-slate-200">Plain Text</div>
-                  <div className="text-[11px] text-slate-400">Direct ASCII / UTF-8 structure</div>
+                <div className="p-3 rounded-xl bg-[#0c0e12]/60 border border-white/[0.06] text-center">
+                  <div className="text-xs font-semibold text-slate-200">Plain Text</div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">Direct UTF-8 token parsing</div>
                 </div>
               </div>
             </div>
           ) : (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-400">
-                <span>Paste or paste raw resume text below:</span>
-                <span className="font-mono">{wordCount} words • {charCount} / 50,000 chars</span>
+                <span>Paste raw resume content below:</span>
+                <span className="font-mono text-[11px]">{wordCount} words • {charCount} / 50,000 chars</span>
               </div>
               <textarea
                 id="textarea-resume-content"
                 value={resumeText}
                 onChange={(e) => setResumeText(e.target.value)}
-                placeholder="Paste the full text of your resume here including work experience, education, projects, contact info..."
+                placeholder="Paste the full text of your resume here (work history, skills, education, projects)..."
                 rows={12}
-                className="w-full bg-slate-950/80 border border-slate-800 rounded-xl p-4 text-xs sm:text-sm text-slate-200 font-mono focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-y transition leading-relaxed"
+                className="w-full bg-[#0c0e12] border border-white/[0.1] rounded-xl p-4 text-xs sm:text-sm text-slate-200 font-mono focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/40 outline-none resize-y transition leading-relaxed"
               />
             </div>
           )}
 
         </div>
 
-        {/* Configuration Sidebar (Right 4 Cols) */}
+        {/* Configuration Sidebar */}
         <div className="lg:col-span-4 space-y-6">
           
           {/* Stream Selector */}
-          <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          <div className="bg-[#131720] border border-white/[0.08] rounded-2xl p-5 shadow-xl">
             <label className="block text-xs font-semibold text-slate-200 mb-2">
-              Career Stream / Discipline
+              Career Domain Archetype
             </label>
             <select
               id="select-career-stream"
               value={selectedStream}
               onChange={(e) => setSelectedStream(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:border-blue-500 outline-none"
+              className="w-full bg-[#0c0e12] border border-white/[0.1] rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:border-amber-400 outline-none transition"
             >
               {CAREER_STREAMS.map((s) => (
                 <option key={s} value={s}>
@@ -332,21 +327,21 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
                 </option>
               ))}
             </select>
-            <p className="text-[11px] text-slate-400 mt-2">
-              Gemini dynamically organizes skills and formats credentials based on the domain.
+            <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
+              Gemini tunes entity categorization and semantic skill grouping to your discipline.
             </p>
           </div>
 
-          {/* Profile Photo / Headshot Container */}
-          <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          {/* Profile Photo Headshot */}
+          <div className="bg-[#131720] border border-white/[0.08] rounded-2xl p-5 shadow-xl">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-semibold text-slate-200">
-                Profile Headshot (Optional)
+                Profile Photo (Optional)
               </span>
               {photoBase64 && (
                 <button
                   onClick={() => onPhotoChange(null)}
-                  className="text-[11px] text-rose-400 hover:text-rose-300"
+                  className="text-[11px] text-rose-400 hover:text-rose-300 font-medium"
                 >
                   Remove
                 </button>
@@ -359,16 +354,16 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
                   <img
                     src={photoBase64}
                     alt="Headshot Preview"
-                    className="w-20 h-20 rounded-full object-cover border-2 border-blue-500 shadow-md"
+                    className="w-16 h-16 rounded-full object-cover border border-amber-400/40 shadow-sm"
                   />
                 </div>
               ) : (
                 <div 
                   onClick={() => photoInputRef.current?.click()}
-                  className="w-20 h-20 rounded-full border-2 border-dashed border-slate-700 bg-slate-950/60 flex flex-col items-center justify-center text-slate-400 hover:border-slate-500 cursor-pointer transition shrink-0"
+                  className="w-16 h-16 rounded-full border border-dashed border-white/[0.16] bg-[#0c0e12] flex flex-col items-center justify-center text-slate-400 hover:border-amber-400/40 cursor-pointer transition shrink-0"
                 >
-                  <ImageIcon className="w-6 h-6 text-slate-500" />
-                  <span className="text-[9px] mt-1">Add Photo</span>
+                  <ImageIcon className="w-5 h-5 text-slate-500" />
+                  <span className="text-[9px] mt-1 font-mono">Upload</span>
                 </div>
               )}
 
@@ -382,47 +377,47 @@ export const ResumeInputStep: React.FC<ResumeInputStepProps> = ({
                 />
                 <button
                   onClick={() => photoInputRef.current?.click()}
-                  className="text-xs font-semibold text-blue-400 hover:text-blue-300 block mb-1"
+                  className="text-xs font-semibold text-amber-400 hover:text-amber-300 block mb-1"
                 >
-                  {photoBase64 ? "Change Headshot" : "Upload Custom Headshot"}
+                  {photoBase64 ? "Change Headshot" : "Upload Headshot"}
                 </button>
                 <span className="text-[11px] text-slate-500">
-                  Auto-extracted if present in your uploaded resume document. If no photo is found or provided, no dummy avatar is displayed in your portfolio.
+                  If omitted, your portfolio renders a clean typographical header.
                 </span>
               </div>
             </div>
           </div>
 
           {/* Action Trigger Card */}
-          <div className="bg-gradient-to-br from-blue-950/50 via-slate-900 to-indigo-950/40 border border-blue-500/30 rounded-2xl p-5 shadow-2xl">
-            <div className="text-xs font-bold uppercase tracking-wider text-blue-400 mb-1">
-              Step 1 Verification Gate
+          <div className="bg-[#131720] border border-amber-400/30 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-amber-400 mb-1">
+              Factual Grounding Pipeline
             </div>
-            <h3 className="text-sm font-bold text-white mb-2">
+            <h3 className="font-display text-sm font-bold text-slate-100 mb-1.5">
               Zero-Hallucination Extraction
             </h3>
-            <p className="text-xs text-slate-300 mb-4 leading-relaxed">
-              Extracts factual entities with verbatim provenance quotes directly from the source resume.
+            <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+              Extracts validated claims with exact provenance quotes mapped directly from your document text.
             </p>
 
             <button
               id="btn-analyze-resume"
               disabled={isAnalyzing}
               onClick={handleStartAnalysis}
-              className={`w-full py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all ${
+              className={`w-full py-3.5 px-4 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-sm ${
                 isAnalyzing
-                  ? "bg-blue-800 text-blue-200 cursor-wait"
-                  : "bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 text-white shadow-blue-500/25 active:scale-[0.99]"
+                  ? "bg-[#181e2b] text-slate-400 cursor-wait border border-white/[0.08]"
+                  : "bg-amber-400 hover:bg-amber-300 text-slate-950 active:scale-[0.99] font-bold"
               }`}
             >
               {isAnalyzing ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-blue-300" />
-                  <span>{analysisProgress || "Extracting Factual Schema..."}</span>
+                  <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
+                  <span>{analysisProgress || "Extracting Facts..."}</span>
                 </>
               ) : (
                 <>
-                  <span>Analyze Resume & Extract Facts</span>
+                  <span>Extract & Ground Facts</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}

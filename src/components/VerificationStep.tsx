@@ -211,19 +211,19 @@ export const VerificationStep: React.FC<VerificationStepProps> = ({
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       
       {/* Top Banner with Score Gauge */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900 border border-slate-800 rounded-2xl p-6 mb-6 shadow-xl flex flex-wrap items-center justify-between gap-6">
+      <div className="bg-[#131720] border border-white/[0.08] rounded-2xl p-6 mb-6 shadow-xl flex flex-wrap items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <div className="relative w-20 h-20 flex items-center justify-center">
             <svg className="w-20 h-20 -rotate-90" viewBox="0 0 36 36">
               <path
-                className="text-slate-800"
+                className="text-white/[0.08]"
                 strokeWidth="3.5"
                 stroke="currentColor"
                 fill="none"
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               />
               <path
-                className={score >= 80 ? "text-emerald-500" : score >= 60 ? "text-amber-500" : "text-rose-500"}
+                className={score >= 80 ? "text-emerald-400" : score >= 60 ? "text-amber-400" : "text-rose-400"}
                 strokeDasharray={`${score}, 100`}
                 strokeWidth="3.5"
                 strokeLinecap="round"
@@ -233,24 +233,24 @@ export const VerificationStep: React.FC<VerificationStepProps> = ({
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-lg font-bold text-white">{score}%</span>
+              <span className="font-mono text-lg font-bold text-slate-100">{score}%</span>
             </div>
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-white">
+              <h2 className="font-display text-lg font-bold text-slate-100">
                 Factual Provenance Verification
               </h2>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                AI-assisted verification indicator: {score}%
+              <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                {score}% Grounded
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-1 max-w-xl">
-              Cross-checked against the raw resume text using Gemini 3.7 Flash with zero-hallucination constraints.
+              Cross-checked against the raw document tokens with zero-hallucination citation validation.
             </p>
 
-            <div className="flex items-center gap-4 mt-3 text-xs">
+            <div className="flex items-center gap-4 mt-3 text-xs font-mono">
               <span className="flex items-center gap-1 text-emerald-400 font-semibold">
                 <CheckCircle className="w-3.5 h-3.5" />
                 {verifiedCount} Verified
@@ -272,16 +272,16 @@ export const VerificationStep: React.FC<VerificationStepProps> = ({
             id="btn-reverify-facts"
             onClick={onReverify}
             disabled={isVerifying}
-            className="text-xs font-semibold px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5"
+            className="text-xs font-semibold px-3.5 py-2.5 rounded-xl bg-[#181e2b] hover:bg-[#222a3a] text-slate-200 border border-white/[0.08] transition flex items-center gap-1.5"
           >
-            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             {isVerifying ? "Auditing..." : "Re-Verify Facts"}
           </button>
 
           <button
             id="btn-proceed-studio"
             onClick={onProceedToStudio}
-            className="text-xs sm:text-sm font-bold px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/25 transition flex items-center gap-2"
+            className="text-xs sm:text-sm font-bold px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-sm transition flex items-center gap-2"
           >
             <span>Proceed to Studio</span>
             <ArrowRight className="w-4 h-4" />
@@ -290,18 +290,18 @@ export const VerificationStep: React.FC<VerificationStepProps> = ({
       </div>
 
       {/* Main View Tabs */}
-      <div className="flex items-center justify-between border-b border-slate-800 mb-6 pb-2">
+      <div className="flex items-center justify-between border-b border-white/[0.08] mb-6 pb-2">
         <div className="flex items-center gap-2">
           <button
             id="tab-verification-claims"
             onClick={() => setActiveTab("claims")}
             className={`text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2 ${
               activeTab === "claims"
-                ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                ? "bg-[#181e2b] text-slate-100 border border-white/[0.12] shadow-sm"
+                : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
             }`}
           >
-            <ShieldCheck className="w-4 h-4" />
+            <ShieldCheck className="w-4 h-4 text-amber-400" />
             Claim-by-Claim Audit ({verificationResult?.claims?.length || 0})
           </button>
 
@@ -310,11 +310,11 @@ export const VerificationStep: React.FC<VerificationStepProps> = ({
             onClick={() => setActiveTab("editor")}
             className={`text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2 ${
               activeTab === "editor"
-                ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                ? "bg-[#181e2b] text-slate-100 border border-white/[0.12] shadow-sm"
+                : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
             }`}
           >
-            <Edit3 className="w-4 h-4" />
+            <Edit3 className="w-4 h-4 text-amber-400" />
             Fact Sheet & Human Editor
           </button>
 
@@ -323,11 +323,11 @@ export const VerificationStep: React.FC<VerificationStepProps> = ({
             onClick={() => setActiveTab("provenance")}
             className={`text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2 ${
               activeTab === "provenance"
-                ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                ? "bg-[#181e2b] text-slate-100 border border-white/[0.12] shadow-sm"
+                : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
             }`}
           >
-            <FileCheck className="w-4 h-4" />
+            <FileCheck className="w-4 h-4 text-amber-400" />
             Source Provenance Quotes ({resumeData.evidence?.length || 0})
           </button>
         </div>

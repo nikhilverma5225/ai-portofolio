@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { 
   ResumeData, 
   VerificationResult, 
@@ -13,6 +14,7 @@ import { Header } from "./components/Header";
 import { StepNavigation } from "./components/StepNavigation";
 import { ResumeInputStep } from "./components/ResumeInputStep";
 import { ExportStep } from "./components/ExportStep";
+import { LoadingOverlay } from "./components/LoadingOverlay";
 
 const INITIAL_CONFIG: PortfolioConfig = {
   theme: "modern-dark",
@@ -45,6 +47,7 @@ export default function App() {
   const [config, setConfig] = useState<PortfolioConfig>(INITIAL_CONFIG);
 
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
+  const [analyzingFileName, setAnalyzingFileName] = useState<string | undefined>(undefined);
   const [analysisProgress, setAnalysisProgress] = useState<string>("");
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [isRefining, setIsRefining] = useState<boolean>(false);
@@ -95,8 +98,9 @@ export default function App() {
     stream: string;
   }) => {
     setIsAnalyzing(true);
+    setAnalyzingFileName(payload.fileName || (payload.text ? "Pasted Resume Text" : undefined));
     setErrorMessage(null);
-    setAnalysisProgress("Extracting multi-stream factual schema via Gemini 3.7 Flash...");
+    setAnalysisProgress("Extracting multi-stream factual schema via Gemini AI...");
 
     try {
       const extractRes = await fetch("/api/extract-resume", {
@@ -234,7 +238,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-blue-500 selection:text-white">
+    <div className="min-h-screen bg-atelier-radial bg-atelier-grid text-slate-100 flex flex-col selection:bg-amber-400 selection:text-slate-950">
       
       {/* Universal Sticky Header */}
       <Header
@@ -243,10 +247,6 @@ export default function App() {
         onRefreshHealth={checkHealth}
         onLoadSample={handleLoadSample}
         onReset={handleReset}
-        theme={config.theme}
-        onThemeChange={(t) => setConfig({ ...config, theme: t })}
-        accent={config.accent}
-        onAccentChange={(a) => setConfig({ ...config, accent: a })}
       />
 
       {/* 2-Step Streamlined Navigation */}
@@ -257,36 +257,60 @@ export default function App() {
         hasVerifiedData={!!verificationResult}
       />
 
-      {/* Main Workflow Views */}
+      {/* Main Workflow Views with Orchestrated Motion */}
       <main className="flex-1 pb-16">
-        {currentStep === 1 && (
-          <ResumeInputStep
-            onAnalyze={handleAnalyzeResume}
-            isAnalyzing={isAnalyzing}
-            analysisProgress={analysisProgress}
-            errorMessage={errorMessage}
-            photoBase64={photoBase64}
-            onPhotoChange={(b64) => {
-              setPhotoBase64(b64);
-              if (resumeData) {
-                setResumeData({ ...resumeData, profile_image_base64: b64 || undefined });
-              }
-            }}
-          />
-        )}
+        <AnimatePresence mode="wait">
+          {currentStep === 1 && (
+            <motion.div
+              key="step-1"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+            >
+              <ResumeInputStep
+                onAnalyze={handleAnalyzeResume}
+                isAnalyzing={isAnalyzing}
+                analysisProgress={analysisProgress}
+                errorMessage={errorMessage}
+                photoBase64={photoBase64}
+                onPhotoChange={(b64) => {
+                  setPhotoBase64(b64);
+                  if (resumeData) {
+                    setResumeData({ ...resumeData, profile_image_base64: b64 || undefined });
+                  }
+                }}
+              />
+            </motion.div>
+          )}
 
-        {currentStep === 2 && resumeData && (
-          <ExportStep
-            resumeData={resumeData}
-            config={config}
-            onUpdateConfig={setConfig}
-            onUpdateResumeData={setResumeData}
-            onRefineWithAI={handleRefineWithAI}
-            isRefining={isRefining}
-            verificationResult={verificationResult}
-          />
-        )}
+          {currentStep === 2 && resumeData && (
+            <motion.div
+              key="step-2"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+            >
+              <ExportStep
+                resumeData={resumeData}
+                config={config}
+                onUpdateConfig={setConfig}
+                onUpdateResumeData={setResumeData}
+                onRefineWithAI={handleRefineWithAI}
+                isRefining={isRefining}
+                verificationResult={verificationResult}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
+
+      {/* Full-screen animated extraction overlay with live messages */}
+      <LoadingOverlay
+        isLoading={isAnalyzing}
+        fileName={analyzingFileName}
+      />
 
     </div>
   );

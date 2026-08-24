@@ -1,17 +1,12 @@
 import React, { useState } from "react";
 import { 
-  Sparkles, 
-  ShieldCheck, 
-  Cpu, 
-  RotateCcw, 
-  Sun, 
-  Moon, 
   FileText, 
-  CheckCircle2, 
-  AlertTriangle,
-  RefreshCw
+  RotateCcw, 
+  RefreshCw,
+  Layers,
+  ChevronDown
 } from "lucide-react";
-import { ApiHealthStatus, ThemeType, AccentColor } from "../types";
+import { ApiHealthStatus } from "../types";
 import { SAMPLE_RESUMES, SampleResume } from "../data/sampleResumes";
 
 interface HeaderProps {
@@ -20,10 +15,6 @@ interface HeaderProps {
   onRefreshHealth: () => void;
   onLoadSample: (sample: SampleResume) => void;
   onReset: () => void;
-  theme: ThemeType;
-  onThemeChange: (theme: ThemeType) => void;
-  accent: AccentColor;
-  onAccentChange: (accent: AccentColor) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -32,72 +23,68 @@ export const Header: React.FC<HeaderProps> = ({
   onRefreshHealth,
   onLoadSample,
   onReset,
-  theme,
-  onThemeChange,
-  accent,
-  onAccentChange,
 }) => {
   const [showSampleMenu, setShowSampleMenu] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-950/85 border-b border-slate-800 text-white px-4 lg:px-8 py-3 transition-colors">
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-[#0c0e12]/90 border-b border-white/[0.08] text-slate-100 px-4 lg:px-8 py-3 transition-colors">
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
         
-        {/* Brand & Badges */}
+        {/* Brand & Monolithic Mark */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 border border-blue-400/30">
-            <Sparkles className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 rounded-lg bg-[#181e2b] border border-white/[0.12] flex items-center justify-center text-amber-400 shadow-sm">
+            <Layers className="w-4 h-4" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-                AI-Assisted Portfolio Generator
+            <div className="flex items-center gap-2.5">
+              <span className="font-display font-bold text-base tracking-tight text-slate-100">
+                Atelier<span className="text-amber-400 ml-1">Portfolio</span>
               </span>
-              <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                <ShieldCheck className="w-3 h-3" />
-                Zero Hallucination
+              <span className="hidden sm:inline-flex items-center text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded bg-white/[0.06] text-slate-300 border border-white/[0.08]">
+                Verified Studio
               </span>
             </div>
             <p className="text-xs text-slate-400 hidden md:block">
-              Universal Resume Fact Extractor & High-Profile Portfolio Studio
+              Zero-Hallucination Resume to Interactive Portfolio Engine
             </p>
           </div>
         </div>
 
         {/* Controls & API Status */}
-        <div className="flex items-center flex-wrap gap-2 sm:gap-3">
+        <div className="flex items-center flex-wrap gap-2.5">
           
           {/* Sample Resumes Dropdown */}
           <div className="relative">
             <button
               id="btn-sample-resumes"
               onClick={() => setShowSampleMenu(!showSampleMenu)}
-              className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
-              title="Load a verified sample resume"
+              className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-[#181e2b] hover:bg-[#222a3a] text-slate-200 border border-white/[0.08] transition"
+              title="Load a pre-verified sample resume"
             >
-              <FileText className="w-3.5 h-3.5 text-blue-400" />
+              <FileText className="w-3.5 h-3.5 text-amber-400" />
               <span>Sample Resumes</span>
+              <ChevronDown className="w-3 h-3 text-slate-400 ml-0.5" />
             </button>
 
             {showSampleMenu && (
               <div 
-                className="absolute right-0 mt-2 w-72 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-2 z-50 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-150"
+                className="absolute right-0 mt-2 w-72 bg-[#131720] border border-white/[0.1] rounded-xl shadow-2xl p-1.5 z-50 backdrop-blur-xl"
                 onClick={() => setShowSampleMenu(false)}
               >
-                <div className="text-[11px] font-semibold text-slate-400 px-2 py-1 uppercase tracking-wider">
-                  Select Pre-Verified Profile
+                <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 px-2.5 py-1.5 border-b border-white/[0.06] mb-1">
+                  Load Pre-Verified Profile
                 </div>
                 {SAMPLE_RESUMES.map((sample) => (
                   <button
                     key={sample.id}
                     onClick={() => onLoadSample(sample)}
-                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/80 transition flex items-start gap-2.5 group"
+                    className="w-full text-left px-2.5 py-2 rounded-lg hover:bg-white/[0.06] transition flex items-start gap-2.5 group"
                   >
-                    <span className="text-xs font-bold text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20 group-hover:border-blue-500/40">
+                    <span className="text-[10px] font-mono uppercase font-semibold text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-400/20">
                       {sample.badge}
                     </span>
-                    <div>
-                      <div className="text-xs font-medium text-slate-200 group-hover:text-white">
+                    <div className="min-w-0">
+                      <div className="text-xs font-medium text-slate-200 group-hover:text-white truncate">
                         {sample.name}
                       </div>
                       <div className="text-[11px] text-slate-400 line-clamp-1">
@@ -110,27 +97,25 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          {/* API Health Pill */}
+          {/* API Health Status */}
           <button
             id="btn-api-health"
             onClick={onRefreshHealth}
             disabled={checkingHealth}
-            className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition ${
+            className={`flex items-center gap-2 text-xs font-mono px-3 py-1.5 rounded-lg border transition ${
               apiHealth?.ok
-                ? "bg-emerald-950/40 border-emerald-600/40 text-emerald-300 hover:bg-emerald-900/40"
-                : "bg-amber-950/40 border-amber-600/40 text-amber-300 hover:bg-amber-900/40"
+                ? "bg-[#181e2b] border-white/[0.08] text-slate-300 hover:border-white/[0.16]"
+                : "bg-amber-950/20 border-amber-500/30 text-amber-300 hover:bg-amber-950/40"
             }`}
-            title={`Gemini API Status: ${apiHealth?.ok ? "Live & Ready" : apiHealth?.error || "Checking"}`}
+            title={`Gemini API: ${apiHealth?.ok ? "Live & Verified" : apiHealth?.error || "Checking"}`}
           >
             {checkingHealth ? (
-              <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-400" />
-            ) : apiHealth?.ok ? (
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <RefreshCw className="w-3 h-3 animate-spin text-amber-400" />
             ) : (
-              <span className="w-2 h-2 rounded-full bg-amber-400" />
+              <span className={`w-2 h-2 rounded-full ${apiHealth?.ok ? "bg-emerald-400" : "bg-amber-400"}`} />
             )}
             <span className="hidden sm:inline">
-              {checkingHealth ? "Checking..." : apiHealth?.ok ? `${apiHealth.model || "Gemini Live"} (${apiHealth.latencyMs}ms)` : "API Warning"}
+              {checkingHealth ? "Checking..." : apiHealth?.ok ? `${apiHealth.model} (${apiHealth.latencyMs}ms)` : "API Offline"}
             </span>
           </button>
 
@@ -138,8 +123,8 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             id="btn-reset-workflow"
             onClick={onReset}
-            className="flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-rose-900/30 hover:text-rose-300 hover:border-rose-700/50 text-slate-300 border border-slate-700 transition"
-            title="Clear and start new resume"
+            className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg bg-[#181e2b] hover:bg-rose-950/30 hover:text-rose-300 hover:border-rose-700/40 text-slate-300 border border-white/[0.08] transition"
+            title="Clear workflow and start fresh"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span className="hidden md:inline">Reset</span>
